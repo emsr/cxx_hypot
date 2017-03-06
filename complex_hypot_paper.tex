@@ -1,0 +1,200 @@
+\documentclass[ebook,10pt,oneside,openany,final]{memoir}
+
+\usepackage[american]
+           {babel}        % needed for iso dates
+\usepackage[iso,american]
+           {isodate}      % use iso format for dates
+\usepackage[final]
+           {listings}     % code listings
+\usepackage{longtable}    % auto-breaking tables
+\usepackage{ltcaption}    % fix captions for long tables
+\usepackage{relsize}      % provide relative font size changes
+\usepackage{textcomp}     % provide \text{l,r}angle
+\usepackage{underscore}   % remove special status of '_' in ordinary text
+\usepackage{parskip}      % handle non-indented paragraphs "properly"
+\usepackage{array}        % new column definitions for tables
+\usepackage[normalem]{ulem}
+\usepackage{enumitem}
+\usepackage{color}        % define colors for strikeouts and underlines
+\usepackage{amsmath}      % additional math symbols
+\usepackage{mathrsfs}     % mathscr font
+\usepackage{microtype}
+\usepackage{multicol}
+\usepackage{xspace}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[pdftex, final]{graphicx}
+\usepackage[pdftex,
+            pdftitle={C++ International Standard},
+            pdfsubject={C++ International Standard},
+            pdfcreator={Edward Smith-Rowland},
+            bookmarks=true,
+            bookmarksnumbered=true,
+            pdfpagelabels=true,
+            pdfpagemode=UseOutlines,
+            pdfstartview=FitH,
+            linktocpage=true,
+            colorlinks=true,
+            linkcolor=blue,
+            plainpages=false
+           ]{hyperref}
+\usepackage{memhfixc}     % fix interactions between hyperref and memoir
+\usepackage[active,header=false,handles=false,copydocumentclass=false,generate=std-gram.ext,extract-cmdline={gramSec},extract-env={bnftab,simplebnf,bnf,bnfkeywordtab}]{extract} % Grammar extraction
+
+\pdfminorversion=5
+\pdfcompresslevel=9
+\pdfobjcompresslevel=2
+
+\renewcommand\RSsmallest{5.5pt}  % smallest font size for relsize
+
+%%--------------------------------------------------
+%% fix interaction between hyperref and other
+%% commands
+\pdfstringdefDisableCommands{\def\smaller#1{#1}}
+\pdfstringdefDisableCommands{\def\textbf#1{#1}}
+\pdfstringdefDisableCommands{\def\raisebox#1{}}
+\pdfstringdefDisableCommands{\def\hspace#1{}}
+
+%%--------------------------------------------------
+%% add special hyphenation rules
+\hyphenation{tem-plate ex-am-ple in-put-it-er-a-tor name-space name-spaces non-zero}
+
+%%--------------------------------------------------
+%% turn off all ligatures inside \texttt
+\DisableLigatures{encoding = T1, family = tt*}
+
+\include{styles}
+
+\title{Proposal to Introduce Two and Three Argument hypot Functions to \tcode{<complex>}}
+\date{}
+
+\begin{document}
+\chapterstyle{cppstd}
+\pagestyle{cpppage}
+
+\maketitle
+
+\begin{verbatim}
+Document Number: PnnnnR0
+Date: 2017-03-06
+Project: Programming Language C++
+Audience: Library Working Group
+Reply-to: Edward Smith-Rowland <3dw4rd@verizon.net>
+\end{verbatim}
+
+\section{Abstract}
+
+This proposal seeks to introduce two-argument and three-argument hypoteneuse functions
+to std::complex to match those functions for floating point types.
+
+\section{Introduction and Motivation}
+
+In complex mathematics and applications one often requires the distance between two points in the complex plane
+for segments of contour integrals or the evaluation of complex functions.  In many fields of engineering and science
+one requires the magnitude of three-dimensional complex vector fields which often vary over many orders of magnitude across
+a region of space.  These distances and magnitudes are best computed in ways which prevent avoidable overflow and underflow.
+Without these functions, programmers might be encouraged to take the square root of the sum of the squares and hope
+for the best.
+
+In addition, it is important to provide a uniform standard math library across all mathematical types in order to support
+the implementation of type-generic mathematical, statistical, and engineering libraries.  To the greatest posible extent,
+complex and real floating point types should share a suite of standalone functions even when some of them are no-ops
+such as \tcode{std::real()} and \tcode{std::imag()} for foating point types.
+
+Recall the distance formulas in two and three dimensions:
+
+\[%
+\mathsf{d}_2 = \sqrt{\lvert\mathsf{x}_2 - \mathsf{x}_1\rvert^2
+                   + \lvert\mathsf{y}_2 - \mathsf{y}_1\rvert^2}
+\]
+
+\[%
+\mathsf{d}_3 = \sqrt{\lvert\mathsf{x}_2 - \mathsf{x}_1\rvert^2
+                   + \lvert\mathsf{y}_2 - \mathsf{y}_1\rvert^2
+                   + \lvert\mathsf{z}_2 - \mathsf{z}_1\rvert^2}
+\]
+
+where the absolute value for complex numbers is used:
+\[%
+\lvert\mathsf{w}\rvert = \sqrt{Re[\mathsf{w}]^2 + Im[\mathsf{w}]^2}
+\]
+Note that $ \lvert\mathsf{w}\rvert $ is supported by \tcode{std::abs(w)}
+
+
+\section{Design \& Considerations}
+
+This proposal requires that the value types of all complex arguments be subjected to the usual
+floating-point promotion rules.  This is the return type for the hypot functions.
+
+One could further require that if any one variable is complex, any real variables are promoted to complex
+and the promotion proceed as above.
+I'm not proposing that now but it would be easy to add if it is desired.
+
+This proposal does not add functions prefixed by \tcode{'c'} for complex or suffixed by type \tcode{'l'} or \tcode{'f'}.
+The latter is in keeping with the real counterparts and this proposal seeks to widen genericity.
+
+
+\section{Impact on the Standard}
+
+This  proposal is a minimal library extension and does not require any changes to the core language,
+nor will this affect code that depends on the current definition of \tcode{std::hypot} for floating-point types.
+The complex variants of \tcode{std::hypot} is as mathematically well-understood as their real counterparts
+
+
+\section{Proposed Wording}
+
+Under
+26.5.1	Header \tcode{<complex>} synopsis	[complex.syn]
+...
+// 26.5.7, values:
+\begin{codeblock}
+...
+template<class T> T abs(const complex<T>\&);
+template<class T> T arg(const complex<T>\&);
+template<class T> T norm(const complex<T>\&);
++ template<class T> T hypot(const complex<T>\&, const complex<T>\&);
++ template<class T> T hypot(const complex<T>\&, const complex<T>\&, const complex<T>\&);
+\end{codeblock}
+
+Under
+26.5.7	complex value operations	[complex.value.ops]
+
+Insert
+
+\begin{codeblock}
+    template<class T> T hypot(const complex<T>\& x, const complex<T>\& y);
+\end{codeblock}
+/6	Returns: The two-dimensional hypoteneuse $\sqrt{x^2 + y^2}$.
+
+\begin{codeblock}
+    template<class T> T hypot(const complex<T>\& x, const complex<T>\& y, const complex<T>\& z);
+\end{codeblock}
+/7	Returns: The three-dimensional hypoteneuse $\sqrt{x^2 + y^2 + z^2}$.
+
+
+\section{Feature Testing}
+
+For the purposes of SG10, we recommend the feature-testing macro name __cpp_lib_hypot
+added for real three-argument hypot be retained for this feature with a new date indicating
+extension of both std::hypot overloads to std::complex types.
+
+
+\section{Changes Since Revision 0 of the Proposal}
+
+This is the first draft of this proposal.
+
+
+\section{Acknowledgements}
+
+I am grateful to Walter Brown for encouraging this proposal.
+
+
+\section{References}
+
+[N1836] Matt Austern, Draft Technical Report on C++ Library Extensions
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2005/n1836.pdf
+
+[P0030R1] Benson Ma, Proposal to Introduce a 3-Argument Overload to std::hypot
+http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2015/p0030r1.pdf
+
+\end{document}

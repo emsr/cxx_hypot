@@ -1,3 +1,11 @@
+# LateX
+*.aux
+*.log
+*.out
+*.xtr
+*.synctex.gz
+std-gram.ext
+
 # Compiled Object files
 *.slo
 *.lo
