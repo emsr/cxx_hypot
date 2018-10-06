@@ -1,8 +1,8 @@
 /*
-$HOME/bin/bin/g++ -std=gnu++17 -g -Wall -Wextra -Wno-psabi -I. -o test_hypot test_hypot.cpp -L$HOME/bin/lib64 -lquadmath
+$HOME/bin/bin/g++ -std=gnu++17 -g -Wall -Wextra -Wno-psabi -I../tr29124_test -o test_hypot test_hypot.cpp -L$HOME/bin/lib64 -lquadmath
 ./test_hypot > test_hypot.txt
 
-g++ -std=gnu++14 -Wall -Wextra -DNO_LOGBQ -I. -o test_hypot test_hypot.cpp -lquadmath
+g++ -std=gnu++17 -Wall -Wextra -Wno-psabi -DNO_LOGBQ -I../tr29124_test -o test_hypot test_hypot.cpp -lquadmath
 ./test_hypot > test_hypot.txt
 */
 
@@ -11,7 +11,7 @@ g++ -std=gnu++14 -Wall -Wextra -DNO_LOGBQ -I. -o test_hypot test_hypot.cpp -lqua
 #include <iomanip>
 #include <algorithm>
 #include <cmath>
-#include <bits/specfun_util.h>
+#include <bits/complex_util.h>
 
 //#define __cpp_lib_hypot 201603L
 
@@ -32,7 +32,7 @@ namespace __detail
     constexpr _Tp
     __hypot3(_Tp __x, _Tp __y, _Tp __z)
     {
-      if (__isnan(__x) || __isnan(__y) || __isnan(__z))
+      if (std::isnan(__x) || std::isnan(__y) || std::isnan(__z))
 	return std::numeric_limits<_Tp>::quiet_NaN();
       else
 	{
@@ -76,7 +76,7 @@ namespace __detail
     constexpr _Tp
     __hypot3(_Tp __x, _Tp __y, _Tp __z)
     {
-      if (__isnan(__x) || __isnan(__y) || __isnan(__z))
+      if (std::isnan(__x) || std::isnan(__y) || std::isnan(__z))
 	return std::numeric_limits<_Tp>::quiet_NaN();
       else
 	{
@@ -109,9 +109,9 @@ namespace __detail
    */
   template<typename _Tp>
     constexpr __gnu_cxx::__promote_fp_t<_Tp>
-    __hypot3(std::complex<_Tp>& __x, std::complex<_Tp>& __y)
+    __hypot(const std::complex<_Tp>& __x, const std::complex<_Tp>& __y)
     {
-      if (__isnan(__x) || __isnan(__y))
+      if (std::isnan(__x) || std::isnan(__y))
 	return std::numeric_limits<_Tp>::quiet_NaN();
       else
 	{
@@ -135,16 +135,16 @@ namespace __detail
    * Return the three-dimensional hypoteneuse of complex arguments
    * @c x, @c y, @c z:
    * @f[
-   *    hypot(x,y) = \sqrt{|x|^2 + |y|^2 + |z|^2}
+   *    hypot(x,y,z) = \sqrt{|x|^2 + |y|^2 + |z|^2}
    * @f]
    * avoiding underflow/overflow with small/large arguments.
    */
   template<typename _Tp>
     constexpr __gnu_cxx::__promote_fp_t<_Tp>
-    __hypot3(std::complex<_Tp>& __x, std::complex<_Tp>& __y,
-	     std::complex<_Tp>& __z)
+    __hypot3(const std::complex<_Tp>& __x, const std::complex<_Tp>& __y,
+	     const std::complex<_Tp>& __z)
     {
-      if (__isnan(__x) || __isnan(__y))
+      if (std::isnan(__x) || std::isnan(__y) || std::isnan(__z))
 	return std::numeric_limits<_Tp>::quiet_NaN();
       else
 	{
@@ -182,33 +182,33 @@ namespace __detail
   hypot(long double __x, long double __y, long double __z)
   { return std::__detail::__hypot3<long double>(__x, __y, __z); }
 
-  template<typename _Tpx, typename _Tpy, typename _Tpz>
-    constexpr inline __gnu_cxx::__promote_fp_t<_Tpx, _Tpy, _Tpz>
-    hypot(_Tpx __x, _Tpy __y, _Tpz __z)
+  template<typename _Tx, typename _Ty, typename _Tz>
+    constexpr inline __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>
+    hypot(_Tx __x, _Ty __y, _Tz __z)
     {
-      using __type = __gnu_cxx::__promote_fp_t<_Tpx, _Tpy, _Tpz>;
+      using __type = __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>;
       return std::__detail::__hypot3<__type>(__x, __y, __z);
     }
 
 
   constexpr inline float
   hypot(std::complex<float> __x, std::complex<float> __y)
-  { return std::__detail::__hypot3<float>(__x, __y); }
+  { return std::__detail::__hypot<float>(__x, __y); }
 
   constexpr inline double
   hypot(std::complex<double> __x, std::complex<double> __y)
-  { return std::__detail::__hypot3<double>(__x, __y); }
+  { return std::__detail::__hypot<double>(__x, __y); }
 
   constexpr inline long double
   hypot(std::complex<long double> __x, std::complex<long double> __y)
-  { return std::__detail::__hypot3<long double>(__x, __y); }
+  { return std::__detail::__hypot<long double>(__x, __y); }
 
-  template<typename _Tpx, typename _Tpy>
-    constexpr inline __gnu_cxx::__promote_fp_t<_Tpx, _Tpy>
-    hypot(std::complex<_Tpx> __x, std::complex<_Tpy> __y)
+  template<typename _Tx, typename _Ty>
+    constexpr inline __gnu_cxx::__promote_fp_t<_Tx, _Ty>
+    hypot(std::complex<_Tx> __x, std::complex<_Ty> __y)
     {
-      using __type = __gnu_cxx::__promote_fp_t<_Tpx, _Tpy>;
-      return std::__detail::__hypot3<__type>(__x, __y);
+      using __type = __gnu_cxx::__promote_fp_t<_Tx, _Ty>;
+      return std::__detail::__hypot<__type>(__x, __y);
     }
 
   constexpr inline float
@@ -226,12 +226,12 @@ namespace __detail
 	std::complex<long double> __z)
   { return std::__detail::__hypot3<long double>(__x, __y, __z); }
 
-  template<typename _Tpx, typename _Tpy, typename _Tpz>
-    constexpr inline __gnu_cxx::__promote_fp_t<_Tpx, _Tpy, _Tpz>
-    hypot(std::complex<_Tpx> __x, std::complex<_Tpy> __y,
-	  std::complex<_Tpz> __z)
+  template<typename _Tx, typename _Ty, typename _Tz>
+    constexpr inline __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>
+    hypot(std::complex<_Tx> __x, std::complex<_Ty> __y,
+	  std::complex<_Tz> __z)
     {
-      using __type = __gnu_cxx::__promote_fp_t<_Tpx, _Tpy, _Tpz>;
+      using __type = __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>;
       return std::__detail::__hypot3<__type>(__x, __y, __z);
     }
 
