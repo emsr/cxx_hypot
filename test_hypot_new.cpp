@@ -1,9 +1,14 @@
 /*
+g++ -DOLDOLDWAY=1 -o test_hypot_old2 test_hypot_new.cpp
+./test_hypot_old2 > test_hypot_old2.txt
+
 g++ -DOLDWAY=1 -o test_hypot_old test_hypot_new.cpp
 ./test_hypot_old > test_hypot_old.txt
 
 g++ -UOLDWAY -o test_hypot_new test_hypot_new.cpp
 ./test_hypot_new > test_hypot_new.txt
+
+kdiff3 test_hypot_old2.txt test_hypot_old.txt test_hypot_new.txt
 */
 
 #include <iostream>
@@ -37,11 +42,17 @@ g++ -UOLDWAY -o test_hypot_new test_hypot_new.cpp
 	      return std::numeric_limits<_Tp>::infinity();
 	    else
 	      {
-#ifdef OLDWAY
+#if defined(OLDOLDWAY)
 		__x /= __amax;
 		__y /= __amax;
 		__z /= __amax;
 		return __amax * std::sqrt(__x * __x + __y * __y + __z * __z);
+#elif defined(OLDWAY)
+		const auto __scale = _Tp{1} / __amax;
+		__x *= __scale;
+		__y *= __scale;
+		__z *= __scale;
+		return std::sqrt(__x * __x + __y * __y + __z * __z) / __scale;
 #else
 		const auto __scale = _Tp{1} / __amax;
 		const auto __l0 = __scale * std::min(__z, std::max(__x, __y));
