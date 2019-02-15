@@ -10,7 +10,7 @@ g++ -std=gnu++17 -Wall -Wextra -Wno-psabi -DNO_LOGBQ -I../tr29124_test -o test_h
 #include <iostream>
 #include <iomanip>
 #include <algorithm>
-#include <cmath>
+#include <ext/cmath>
 #include <bits/complex_util.h>
 
 //#define __cpp_lib_hypot 201603L
@@ -108,7 +108,7 @@ namespace __detail
    * avoiding underflow/overflow with small/large arguments.
    */
   template<typename _Tp>
-    constexpr __gnu_cxx::__promote_fp_t<_Tp>
+    constexpr __gnu_cxx::fp_promote_t<_Tp>
     __hypot(const std::complex<_Tp>& __x, const std::complex<_Tp>& __y)
     {
       if (std::isnan(__x) || std::isnan(__y))
@@ -140,7 +140,7 @@ namespace __detail
    * avoiding underflow/overflow with small/large arguments.
    */
   template<typename _Tp>
-    constexpr __gnu_cxx::__promote_fp_t<_Tp>
+    constexpr __gnu_cxx::fp_promote_t<_Tp>
     __hypot3(const std::complex<_Tp>& __x, const std::complex<_Tp>& __y,
 	     const std::complex<_Tp>& __z)
     {
@@ -183,10 +183,10 @@ namespace __detail
   { return std::__detail::__hypot3<long double>(__x, __y, __z); }
 
   template<typename _Tx, typename _Ty, typename _Tz>
-    constexpr inline __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>
+    constexpr inline __gnu_cxx::fp_promote_t<_Tx, _Ty, _Tz>
     hypot(_Tx __x, _Ty __y, _Tz __z)
     {
-      using __type = __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>;
+      using __type = __gnu_cxx::fp_promote_t<_Tx, _Ty, _Tz>;
       return std::__detail::__hypot3<__type>(__x, __y, __z);
     }
 
@@ -204,10 +204,10 @@ namespace __detail
   { return std::__detail::__hypot<long double>(__x, __y); }
 
   template<typename _Tx, typename _Ty>
-    constexpr inline __gnu_cxx::__promote_fp_t<_Tx, _Ty>
+    constexpr inline __gnu_cxx::fp_promote_t<_Tx, _Ty>
     hypot(std::complex<_Tx> __x, std::complex<_Ty> __y)
     {
-      using __type = __gnu_cxx::__promote_fp_t<_Tx, _Ty>;
+      using __type = __gnu_cxx::fp_promote_t<_Tx, _Ty>;
       return std::__detail::__hypot<__type>(__x, __y);
     }
 
@@ -227,11 +227,11 @@ namespace __detail
   { return std::__detail::__hypot3<long double>(__x, __y, __z); }
 
   template<typename _Tx, typename _Ty, typename _Tz>
-    constexpr inline __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>
+    constexpr inline __gnu_cxx::fp_promote_t<_Tx, _Ty, _Tz>
     hypot(std::complex<_Tx> __x, std::complex<_Ty> __y,
 	  std::complex<_Tz> __z)
     {
-      using __type = __gnu_cxx::__promote_fp_t<_Tx, _Ty, _Tz>;
+      using __type = __gnu_cxx::fp_promote_t<_Tx, _Ty, _Tz>;
       return std::__detail::__hypot3<__type>(__x, __y, __z);
     }
 
