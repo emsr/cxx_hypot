@@ -1,0 +1,12 @@
+codecov:
+  notify:
+    require_ci_to_pass: no
+
+coverage:
+
+comment:
+  layout: "header, diff"
+  behavior: default
+  require_changes: no
+
+# 1af5a35c-cce4-4611-878a-7f0e78841353
